@@ -20,18 +20,27 @@ void *execute_thread(void *arg){
 	int j;
 
 	//On attend inversement au numero du threads	
-	
+
+
 	sleep(numero_thread * 2);
 	
-	printf("Le ihread numero %d demarre a  %ld / \n ",numero_thread,time(0));
+	printf("\n Le thread numero %d demarre a  %ld  ",numero_thread,time(0));
 	
 	//Boucle d'execution fictive
-	for(i=1;i<=200000;i++){
 	
+	
+	
+	for(i=1;i<=100000;i++){
+	
+		
+		
+	for(j=1;j<=20000;j++){
+	
+	}
 	}
 	
 
-	printf("Le thread numero %d fini a / %ld",numero_thread,time(0)); 
+	printf("\n Le thread numero %d fini a %ld",numero_thread,time(0)); 
 	pthread_exit(NULL);
 }
 		
@@ -59,6 +68,8 @@ CPU_ZERO(&mask);
 CPU_SET(0,&mask);
 
 struct sched_param param;
+
+int init = pthread_attr_init(&attr);
 
 printf("Avant la création des thread \n");
 
