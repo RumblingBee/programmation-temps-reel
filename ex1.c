@@ -31,12 +31,9 @@ void *execute_thread(void *arg){
 	
 	
 	for(i=1;i<=100000;i++){
+		for(j=1;j<=10000;j++){
 	
-		
-		
-	for(j=1;j<=20000;j++){
-	
-	}
+		}	
 	}
 	
 
@@ -71,7 +68,7 @@ struct sched_param param;
 
 int init = pthread_attr_init(&attr);
 
-printf("Avant la création des thread \n");
+printf("Avant la création des threads \n");
 
 
 // Definition de la politique d ordonnancement
@@ -87,7 +84,12 @@ if( error_id = pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED) != 0 
 exit(EXIT_FAILURE);
 
 }
+// Afiinité du thread
+if( error_id = pthread_attr_setaffinity_np(&attr, sizeof(cpu_set_t), &mask ) != 0 ){
+	fprintf(stderr,"Erreur lors de l'attribution de l'affinité %s \n", strerror(error_id));
+exit(EXIT_FAILURE);
 
+}
 // Boucle de creation des threads
 
 for(i=0; i < NB_THREADS; i++){
