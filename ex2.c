@@ -7,9 +7,11 @@
 #include <time.h>
 #include <string.h>
 #include <sched.h>
+#include <sys/time.h>
+
 
 #define NB_THREADS 4
-#define POLICY SCHED_FIFO
+#define POLICY SCHED_RR
 
 
 void *execute_thread(void *arg){
@@ -18,11 +20,43 @@ void *execute_thread(void *arg){
 
 	int i;
 	int j;
+	int timeQuantum = 10;
 
 	//On attend inversement au numero du threads	
 
 
-	sleep(numero_thread * 2);
+	sleep(2);
+
+	struct timeval startingTime, lastTime, currentTime;
+
+
+	gettimeofday(&startingTime,NULL);
+
+	currentTime = startingTime;
+
+	long long int timeDiff; 
+
+	while(1){
+		
+	
+		do{
+
+			lastTime = currentTime;
+
+			//On actualise la date actuelle
+			gettimeofday(&currentTime,NULL);
+
+			if((currentTime.tv_sec - startingTime.tv_sec) > timeQuantum){
+				pthread_exit(NULL);
+			}
+			timeDiff = currentTime.tv_sec - lastTime.tv_sec;
+			timeDiff = timeDiff * 1000000;
+			}while(timeDiff < 1000);
+
+				fprintf(stdout, "%ld / %d prempte \n", currentTime.tv_sec, numero_thread);
+				fprintf(stdout, "%ld / %d active \n", currentTime.tv_sec, numero_thread);
+		
+	}
 	
 	printf("\n Le thread numero %d demarre a  %ld  ",numero_thread,time(0));
 	
@@ -90,22 +124,19 @@ if( error_id = pthread_attr_setaffinity_np(&attr, sizeof(cpu_set_t), &mask ) != 
 exit(EXIT_FAILURE);
 
 }
-// Boucle de creation des threads
 
-for(i=0; i < NB_THREADS; i++){
+// On attribue la même priorité à chaque Thread
+param.sched_priority = 50;
 
-//On attribue la priorité à chaque Threads 
-
-	
-	param.sched_priority = (i+1)*10;
-
-	// Enregistrement des paramètres du thread
+// Enregistrement des paramètres des threads
 	if( error_id = pthread_attr_setschedparam(&attr, &param) != 0 ){
 		fprintf(stderr,"Erreur lors de l'attribution des paramètres du thread %s \n", strerror(error_id));
 		exit(EXIT_FAILURE);
 
 	}
+// Boucle de creation des threads
 
+for(i=0; i < NB_THREADS; i++){
 
 	// Creation des threads
 	
